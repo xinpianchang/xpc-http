@@ -142,7 +142,7 @@ export function getIps(req: IncomingMessage) {
 export function getIp(req: IncomingMessage) {
   let ip = req[IP]
   if (!ip) {
-    ip = req[IP] = getIps(req)[0] || req.socket.remoteAddress || ''
+    ip = req[IP] = getIps(req)[0] || (req.socket && req.socket.remoteAddress) || ''
   }
   return ip
 }
