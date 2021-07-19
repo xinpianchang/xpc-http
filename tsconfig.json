@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
     "target": "esnext",
+    "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "strict": true,
     "forceConsistentCasingInFileNames": true,
