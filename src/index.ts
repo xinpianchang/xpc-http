@@ -1,4 +1,4 @@
-import { CookieSerializeOptions, serialize } from 'cookie'
+import { CookieSerializeOptions, serialize, parse } from 'cookie'
 import type { IncomingMessage, IncomingHttpHeaders, ServerResponse } from 'http'
 import type { IncomingHttpHeaders as IncomingHttp2Headers } from 'http2'
 import { TLSSocket } from 'tls'
@@ -196,6 +196,11 @@ export function setCookie(res: ServerResponse, name: string, val: string, option
   }
 
   appendHeader(res, 'Set-Cookie', serialize(name, val, opts))
+}
+
+export function getCookie(req: IncomingMessage, name: string) {
+  const cookieObj = parse(req.headers.cookie)
+  return cookieObj[name] || ''
 }
 
 export function clearCookie(res: ServerResponse, name: string, options?: SetCookieOptions) {
