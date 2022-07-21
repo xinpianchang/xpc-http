@@ -213,6 +213,11 @@ export function setCookie(res: ServerResponse, name: string, val: string, option
   appendHeader(res, 'Set-Cookie', serialize(name, val, opts))
 }
 
+export function getCookie(req: IncomingMessage, name: string) {
+  const cookieObj = parse(req.headers.cookie)
+  return cookieObj[name] || ''
+}
+
 export function clearCookie(res: ServerResponse, name: string, options?: SetCookieOptions) {
   const opts: SetCookieOptions = merge({ expires: new Date(1), path: '/' }, options)
   setCookie(res, name, '', opts)
