@@ -1,7 +1,7 @@
-import { CookieSerializeOptions, serialize } from 'cookie'
+import { CookieSerializeOptions, serialize, parse } from 'cookie'
 import type { IncomingMessage, IncomingHttpHeaders, ServerResponse } from 'http'
 import type { IncomingHttpHeaders as IncomingHttp2Headers } from 'http2'
-import { TLSSocket } from 'tls'
+import type { TLSSocket } from 'tls'
 import merge from 'utils-merge'
 import { HeadersInit, Headers } from 'node-fetch'
 import { URL } from 'url'
@@ -14,10 +14,12 @@ const config = {
 }
 
 const IP = Symbol('#ip')
+const COOKIE = Symbol('#COOKIE')
 
 declare module 'http' {
   interface IncomingMessage {
     [IP]?: string
+    [COOKIE]?: Record<string, string>
     memoizedURL?: URL
     originalUrl?: string
   }
@@ -182,17 +184,30 @@ export function appendHeaders(res: ServerResponse, init: HeadersInit) {
 
 export type SetCookieOptions = Omit<CookieSerializeOptions, 'encode'>
 
+/**
+ * Get cookie from request headers cookie, value will be decoded with decodeURIComponent
+ * @returns {string | undefined}
+ */
+ export function getCookie(req: IncomingMessage, name: string) {
+  let cookies = req[COOKIE]
+  if (!cookies) {
+    cookies = parse(getHeader(req, 'cookie'))
+    req[COOKIE] = cookies
+  }
+  return cookies[name] as string | undefined
+}
+
+/**
+ * set cookie on response, value will be encoded with encodeURIComponent
+ * @param options {SetCookieOptions} options.maxAge in milliseconds
+ */
 export function setCookie(res: ServerResponse, name: string, val: string, options?: SetCookieOptions) {
-  const opts = merge({}, options) as SetCookieOptions
+  const opts = merge({ path: '/' }, options) as SetCookieOptions
 
   if (typeof opts.maxAge === 'number') {
     const maxAge = opts.maxAge || 0
     opts.expires = new Date(Date.now() + maxAge)
     opts.maxAge = maxAge / 1000
-  }
-
-  if (!opts.path) {
-    opts.path = '/'
   }
 
   appendHeader(res, 'Set-Cookie', serialize(name, val, opts))
