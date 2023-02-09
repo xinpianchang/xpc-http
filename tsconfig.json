@@ -14,9 +14,9 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "skipLibCheck": true,
-    "lib": ["esnext"],
+    "lib": ["esnext", "dom"],
     "outDir": "dist"
   },
   "exclude": ["node_modules", "dist"],
-  "include": ["src"]
+  "include": ["src", "node-env.d.ts"]
 }

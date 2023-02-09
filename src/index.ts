@@ -3,8 +3,7 @@ import type { IncomingMessage, IncomingHttpHeaders, ServerResponse } from 'http'
 import type { IncomingHttpHeaders as IncomingHttp2Headers } from 'http2'
 import type { TLSSocket } from 'tls'
 import merge from 'utils-merge'
-import { HeadersInit, Headers } from 'node-fetch'
-import { URL } from 'url'
+import { Headers, URL } from './web'
 import { Env } from './env'
 
 const config = {
@@ -31,9 +30,11 @@ interface AllHeaders extends IncomingHttp2Headers, IncomingHttpHeaders {
   'x-forwarded-proto'?: string
   'device-id'?: string
 }
-type HeaderType<F extends string> = Lowercase<F> extends keyof AllHeaders
-  ? NonNullable<AllHeaders[Lowercase<F>]>
-  : string | string[]
+type HeaderType<F extends string> = string extends F
+  ? string | string[]
+  : Lowercase<F> extends keyof AllHeaders
+    ? NonNullable<AllHeaders[Lowercase<F>]>
+    : string | string[]
 
 export { Env }
 
