@@ -3,7 +3,6 @@ import type { IncomingMessage, IncomingHttpHeaders, ServerResponse } from 'http'
 import type { IncomingHttpHeaders as IncomingHttp2Headers } from 'http2'
 import type { TLSSocket } from 'tls'
 import merge from 'utils-merge'
-import { Headers, URL } from './web'
 import { Env } from './env'
 
 const config = {
