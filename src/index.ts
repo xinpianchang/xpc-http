@@ -144,7 +144,12 @@ export function getIps(req: IncomingMessage) {
 export function getIp(req: IncomingMessage) {
   let ip = req[IP]
   if (!ip) {
-    ip = req[IP] = getIps(req)[0] || (req.socket && req.socket.remoteAddress) || ''
+    // nextjs not mocked remote address
+    try {
+      ip = req[IP] = getIps(req)[0] || (req.socket && req.socket.remoteAddress) || ''
+    } catch {
+      ip = ''
+    }
   }
   return ip
 }
